@@ -1,0 +1,11 @@
+% Encoding: UTF-8
+
+@Manual{WinProp,
+  title        = {WinProp, Documentation, Propagation Models and Background Information},
+  organization = {AWE Communications GmbH},
+  edition      = {5.43},
+  month        = may,
+  year         = {2002},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}

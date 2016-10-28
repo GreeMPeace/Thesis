@@ -1,0 +1,31 @@
+\contentsline {chapter}{Acknowledgements}{II}{chapter*.1}
+\contentsline {chapter}{Contents}{III}{section*.2}
+\contentsline {chapter}{Abstract}{V}{chapter*.3}
+\contentsline {chapter}{\chapternumberline {1}Introduction}{1}{chapter.1}
+\contentsline {chapter}{\chapternumberline {2}Three Dimensional Visualization and Web Development}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Algorithms}{3}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Marching Cubes Algorithm}{3}{subsection.2.1.1}
+\contentsline {section}{\numberline {2.2}File Types}{4}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Shapefile}{4}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}ODA files}{5}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}APA file}{5}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}CSV file}{5}{subsection.2.2.4}
+\contentsline {section}{\numberline {2.3}Rendering and Output}{6}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Rendering Basics}{6}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Three.js WebGL Framework}{6}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}Possible Renderman Pipline (?)}{7}{subsection.2.3.3}
+\contentsline {chapter}{\chapternumberline {3}System Architecture}{8}{chapter.3}
+\contentsline {section}{\numberline {3.1}System Requirements}{8}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Hardware Requirements}{8}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Software Requirements}{8}{subsection.3.1.2}
+\contentsline {section}{\numberline {3.2}Architectural Design}{9}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Initial JavaScript code}{9}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Frontend -- Backend}{9}{subsection.3.2.2}
+\contentsline {chapter}{\chapternumberline {4}Implementation}{10}{chapter.4}
+\contentsline {chapter}{\chapternumberline {5}Evaluation}{11}{chapter.5}
+\contentsline {appendix}{\chapternumberline {A}Things That Did Not Fit Elsewhere}{12}{appendix.A}
+\contentsline {appendix}{\chapternumberline {B}Abbreviations}{13}{appendix.B}
+\contentsline {chapter}{List of Tables}{14}{section*.4}
+\contentsline {chapter}{List of Figures}{15}{section*.5}
+\contentsline {chapter}{Bibliography}{16}{section*.7}
+\contentsline {chapter}{Declaration}{16}{section*.7}
