@@ -1,1 +1,23 @@
 \chapter{Implementation}
+\section{Datastructures}
+Whithin the implementation the data needs to be represented in a way, that is convenient for the algorithms to work on. In this section I will present some of the special datastructures.
+\subsection{Four Dimensional Arrays}
+The four dimensional array in itself is not an exeptional datastructure, but it has a special meaning in this application. The data delivered by simulation application usually comes as values that can be indexed by the three spacial definitions that define its location.Furthermore, in many simulation circumstances there is more than one antenna, so you get multiple power values for each point in space. Hence, the four dimensional array is a good was to represent this data. In this application, the first index represents the number of the antenna or base station, while the other three indices represent the three spacial directions. Of course, this only works for evenly spaced  positions, but since the marching cubes algorithm works best on evenly spaced data points, this restriction is sensible either way.
+\subsection{Data Point Object}
+The other way to represent data is used for real life measurement data. Here you cannot expect the points to be evenly spaced. They mostly follow steets, or other easly accessible places. Therefore we need exact information on the location of each point. This is realized by a very simple point-object in JavaScript. It has only three members, the x coordinate or ?? and the y coordinate or ??. This is usefull for the inverse distance interpolation used for the real data, because you can easily calculate the distance to any point in space.
+
+A very similar object is used to represent the antenna patterns. Those patterns consist of a horizontal angle, a vertical angle and a amplification for the corresponding direction. Hence, in this case, two of the members represent a direction rather than a point and the value equals the amplification.
+\section{Important algorithms and routines}
+This section describes some classes or functions in either backend or frontend code that implement the core functionality of the application.
+\subsection{The Ajax Loader}
+The Loader-class is a Javascript object. It encapsulates four methods, that provide requests for the four different types of data, that are needed in this application. Namely those are building data, measurement data, simulation data and antenna patterns.
+
+Listing ?? shows the examplary implementation of the building loader method. Forming a request is very straight foreward. The \$-identifier grants access to the methods provided by the JQuery library. There the ajax method abstracts a generic server request. In the curly braces afterwards, one simply has to specify the options. The `url' option sets the request url. This is important because it determines which controller the request is mapped to. The  `type' option tells the server what kind of request is send. Requests to retrieve data usually use the `GET' method. Finally, the `datatype' option tells the server, what kind of response is expected. Since this application mostly requests objects, it expects a response that contains a JSON object.
+\subsection{Filling Simulation data}
+\subsection{The Marching Cubes Algorithm}
+\subsection{Inverse Distance Interpolation}
+\section{Description of Important Procedures}
+\subsection{GUI}
+\subsection{Registering and Loading Data}
+\subsection{Displaying Measurement Data}
+\subsection{Displaying Simulation Data}

@@ -21,11 +21,24 @@
 \contentsline {section}{\numberline {3.2}Architectural Design}{9}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Initial JavaScript code}{9}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Frontend -- Backend}{9}{subsection.3.2.2}
-\contentsline {chapter}{\chapternumberline {4}Implementation}{10}{chapter.4}
-\contentsline {chapter}{\chapternumberline {5}Evaluation}{11}{chapter.5}
-\contentsline {appendix}{\chapternumberline {A}Things That Did Not Fit Elsewhere}{12}{appendix.A}
-\contentsline {appendix}{\chapternumberline {B}Abbreviations}{13}{appendix.B}
-\contentsline {chapter}{List of Tables}{14}{section*.4}
-\contentsline {chapter}{List of Figures}{15}{section*.5}
-\contentsline {chapter}{Bibliography}{16}{section*.7}
-\contentsline {chapter}{Declaration}{16}{section*.7}
+\contentsline {chapter}{\chapternumberline {4}Implementation}{11}{chapter.4}
+\contentsline {section}{\numberline {4.1}Datastructures}{11}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Four Dimensional Arrays}{11}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Data Point Object}{11}{subsection.4.1.2}
+\contentsline {section}{\numberline {4.2}Important algorithms and routines}{11}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}The Ajax Loader}{12}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Filling Simulation data}{12}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}The Marching Cubes Algorithm}{12}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}Inverse Distance Interpolation}{12}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}Description of Important Procedures}{12}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}GUI}{12}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Registering and Loading Data}{12}{subsection.4.3.2}
+\contentsline {subsection}{\numberline {4.3.3}Displaying Measurement Data}{12}{subsection.4.3.3}
+\contentsline {subsection}{\numberline {4.3.4}Displaying Simulation Data}{12}{subsection.4.3.4}
+\contentsline {chapter}{\chapternumberline {5}Evaluation}{13}{chapter.5}
+\contentsline {appendix}{\chapternumberline {A}Things That Did Not Fit Elsewhere}{14}{appendix.A}
+\contentsline {appendix}{\chapternumberline {B}Abbreviations}{15}{appendix.B}
+\contentsline {chapter}{List of Tables}{16}{section*.4}
+\contentsline {chapter}{List of Figures}{17}{section*.5}
+\contentsline {chapter}{Bibliography}{18}{section*.7}
+\contentsline {chapter}{Declaration}{18}{section*.7}
