@@ -66,4 +66,11 @@
   url    = {https://github.com/mrdoob/three.js/wiki/Features},
 }
 
+@Manual{WebGL,
+  title        = {Khronos Releases Final WebGL 1.0 Specification to Bring Accelerated 3D Graphics to the Web without Plug-ins},
+  organization = {Kronos Group},
+  note         = {viewed on: 05.10.2016},
+  url          = {https://www.khronos.org/news/press/khronos-releases-final-webgl-1.0-specification},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

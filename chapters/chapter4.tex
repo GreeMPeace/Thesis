@@ -1,23 +1,151 @@
 \chapter{Implementation}
 \section{Datastructures}
-Whithin the implementation the data needs to be represented in a way, that is convenient for the algorithms to work on. In this section I will present some of the special datastructures.
+Within the implementation the data needs to be represented in a way, that is convenient for the algorithms to work on. In this section I will present some of the special datastructures.
 \subsection{Four Dimensional Arrays}
-The four dimensional array in itself is not an exeptional datastructure, but it has a special meaning in this application. The data delivered by simulation application usually comes as values that can be indexed by the three spacial definitions that define its location.Furthermore, in many simulation circumstances there is more than one antenna, so you get multiple power values for each point in space. Hence, the four dimensional array is a good was to represent this data. In this application, the first index represents the number of the antenna or base station, while the other three indices represent the three spacial directions. Of course, this only works for evenly spaced  positions, but since the marching cubes algorithm works best on evenly spaced data points, this restriction is sensible either way.
+The four dimensional array in itself is not an exceptional datastructure, but it has a special meaning in this application. The data delivered by simulation application usually comes as values that can be indexed by the three spacial definitions that define its location.Furthermore, in many simulation circumstances there is more than one antenna, so you get multiple power values for each point in space. Hence, the four dimensional array is a good was to represent this data. In this application, the first index represents the number of the antenna or base station, while the other three indices represent the three spacial directions. Of course, this only works for evenly spaced  positions, but since the marching cubes algorithm works best on evenly spaced data points, this restriction is sensible either way.
 \subsection{Data Point Object}
-The other way to represent data is used for real life measurement data. Here you cannot expect the points to be evenly spaced. They mostly follow steets, or other easly accessible places. Therefore we need exact information on the location of each point. This is realized by a very simple point-object in JavaScript. It has only three members, the x coordinate or ?? and the y coordinate or ??. This is usefull for the inverse distance interpolation used for the real data, because you can easily calculate the distance to any point in space.
+The other way to represent data is used for real life measurement data. Here you cannot expect the points to be evenly spaced. They mostly follow streets, or other easily accessible places. Therefore we need exact information on the location of each point. This is realized by a very simple point-object in JavaScript. It has only three members, the x coordinate or ?? and the y coordinate or ??. This is useful for the inverse distance interpolation used for the real data, because you can easily calculate the distance to any point in space.
 
 A very similar object is used to represent the antenna patterns. Those patterns consist of a horizontal angle, a vertical angle and a amplification for the corresponding direction. Hence, in this case, two of the members represent a direction rather than a point and the value equals the amplification.
 \section{Important algorithms and routines}
 This section describes some classes or functions in either backend or frontend code that implement the core functionality of the application.
 \subsection{The Ajax Loader}
-The Loader-class is a Javascript object. It encapsulates four methods, that provide requests for the four different types of data, that are needed in this application. Namely those are building data, measurement data, simulation data and antenna patterns.
+The Loader-class is a JavaScript object. It encapsulates four methods, that provide requests for the four different types of data, that are needed in this application. Namely those are building data, measurement data, simulation data and antenna patterns.
 
-Listing ?? shows the examplary implementation of the building loader method. Forming a request is very straight foreward. The \$-identifier grants access to the methods provided by the JQuery library. There the ajax method abstracts a generic server request. In the curly braces afterwards, one simply has to specify the options. The `url' option sets the request url. This is important because it determines which controller the request is mapped to. The  `type' option tells the server what kind of request is send. Requests to retrieve data usually use the `GET' method. Finally, the `datatype' option tells the server, what kind of response is expected. Since this application mostly requests objects, it expects a response that contains a JSON object.
+\lstset{
+caption=Building Loader,
+label=list:Loader,
+language=JavaScript}
+\begin{lstlisting}[float=bph]
+GuiInterface.prototype.loadBuildings = function (path) {
+    var uri = 'api/Building/Get/' + path.replace(".", ";");
+    $.ajax({
+        url: uri,
+        type: "GET",
+        datatype: "json"
+    })
+    .done(function (data) {
+        var Build = new BuildingLoader();
+        Build.addBuild(data);
+    })
+    .fail(function (a, b, c) {
+        alert("Error")
+    });
+};
+\end{lstlisting}
+
+Listing \ref{list:Loader} shows the exemplary implementation of the building loader method. Forming a request is very straight forward. The \$-identifier grants access to the methods provided by the JQuery library. There the `ajax' method abstracts a generic server request. In the curly braces afterwards, one simply has to specify the options. The `url' option sets the request url. This is important because it determines which controller the request is mapped to. The  `type' option tells the server what kind of request is send. Requests to retrieve data usually use the `GET' method. Finally, the `datatype' option tells the server, what kind of response is expected. Since this application mostly requests objects, it expects a response that contains a JSON object. The next methods define callback-functions that get executed on specific events. The `done' method gets executed when the request returns successful, while the `fail' method executes on any error that gets returned.
+
+Each of the loader methods has an individual `done' method. Depending on the type of data that is loaded, those methods creates a specific class instance, which is able to create a three dimensional representation of the data and puts it into the scene. In the case of Listing \ref{list:Loader} the BuildingLoader class uses the method `addBuild' and passes the newly retrieved building data.
+
+
 \subsection{Filling Simulation data}
+Data that gets provided by some Simulation tool, like WinProp~\cite{WinProp}, usually has an overall uniform structure. This means that it consist of points in three dimensional space and one or more power values for each point. Furthermore, those points have a uniform spacing per dimension. However, the three dimensional scalar field can have holes, when buildings or other obstacles are in the way or the antenna is really far away. In that case these holes need to be filled, so the Marching Cubes Algorithm will work properly. This operation is not depending on any graphical calculations, so it is done by the backend directly after reading the data. Listing shows the C\# method, that does this. 
+\lstset{
+caption=Building Loader,
+label=list:Fill}
+\begin{lstlisting}[language=C, float=bph]
+public void fill()
+        {
+            double xdiff = 0, ydiff = 0, zdiff = 0;
+            double lastx = x[0];
+            double lasty = y[0];
+            double lastz = z[0];
+            bool boolx = true, booly = true, boolz = true;
+
+            for (int l = 0, m = 0; l < x.Count; l++) {
+                if (lastx != x[l] && boolx) {
+                    xrang = m++;
+                    xdiff = Math.Abs(lastx - x[l]);
+                    boolx = false;
+                }
+                if (lasty != y[l] && booly) {
+                    yrang = m++;
+                    ydiff = Math.Abs(lasty - y[l]);
+                    booly = false;
+                }
+                if (lastz != z[l] && boolz) {
+                    zrang = m++;
+                    zdiff = Math.Abs(lastz - z[l]);
+                    boolz = false;
+                }
+                if (!boolx && !booly && !boolz)
+                    break;
+                if (l == x.Count - 1) {
+                    if (m < 2)
+                        throw new System.Exception("no valid values");
+                    if (boolx)
+                        xrang = 2;
+                    if (booly)
+                        yrang = 2;
+                    if (boolz)
+                        zrang = 2;
+                }
+            }
+            for (int l = 0; l < x.Count; l++) {
+                if (Math.Abs(lastx - x[l]) > xdiff && l % (xlookup[xrang, yrang] * dim[0]) != 0)  {
+                    introduce(l, lastx, xdiff, 'x');
+                    l--;
+                }
+                if (Math.Abs(lasty - y[l]) > ydiff && l % (ylookup[yrang, zrang] * dim[1]) != 0) {
+                    introduce(l, lasty, ydiff, 'y');
+                    l--;
+                }
+                if (Math.Abs(lastz - z[l]) > zdiff && l % (zlookup[zrang, xrang] * dim[2]) != 0) {
+                    introduce(l, lastz, zdiff, 'z');
+                    l--;
+                }
+                lastx = x[l];
+                lasty = y[l];
+                lastz = z[l];
+            }
+        }
+\end{lstlisting}
+
+After reading the data from a file, all data points are in one big array with coordinates and values. Therefore we can just go through the array and fill in the missing values. The first for loop determines how much the spacing is and which order the coordinates have within the global order. It checks in every run, if the x, y or z coordinates have changed. If one changes, it gets the next higher rank (from 0 -- 2) with the help of the global rank counter `m'. This ensures, that the order in which the dimensions are iterated through by the simulation can be arbitrary. Further, the difference between the changing coordinates gets saved as the corresponding step width. The boolean variables simply interrupt the routine, if all three ranks have been determined. If the loop runs through on the last element of the array, that means there has to be at least one dimension, which has just a single value for coordinates, making the data at least two dimensional. In that case variable m gets evaluated. A value of 1 means that only one dimension has changing coordinates, therefore the system would be one dimensional. That does not make any sense for a visualization, so an error gets thrown. In the case of $m=2$ the data is two dimensional, which is not ideal, but may be visualized as a plane. The remaining variable gets a rank of 2.
+
+The complicated part follows in the next for loop. Here the function again runs through the array, but now it actually fills up the holes. There are two conditions that have to be met, in order to detect a hole. Condition number 1 states that a possibles hole occurs, where the difference of the last value for that coordinate and the current value is greater than the previously determined step width. The second condition is necessary, because the values will also jump at the end of the data set in that direction. In other words, the distance between  three dimensional indices within the global array cannot be a divisor of the current index. The distance of the indices is represented by an individual lookup table, the ranks of the coordinates and the number of elements in that direction. The lookup table returns a value that represents product of the size of all lower dimensions. Multiplied by the size of the current dimension, we get the number of entries in the global index, that each of the directional indices takes up. When both criteria are met a hole is detected and the function `introduce' adds a new value at that position. In this case it adds the value -1000, which is an unrealistic value, hence signaling a hole to future processing algorithms.
 \subsection{The Marching Cubes Algorithm}
+This section refers to the JavaScript code of the Marching Cubes Algorithm, which due to its length can be found at Appendix \ref{list:Cubes}. Also, the basic principles of the algorithm have been explained in Section \ref{chp2:Cubes}.
+
+The CubeMarcher-class encapsulates all things related to the Marching Cubes Algorithm, mainly the method, which implements the algorithm itself. This method gets five parameters to work on. The first parameter is a three dimensional array, which stores the power values indexed according to their position in three dimensional space. The second parameter is the threshold, at which to place the isosurface. This is just a simple floating point value. The other three parameters are the minimum and maximum coordinates, as well as the step width. All three are simple objects containing one value per dimension that can be accessed by the member names `x', `y' and `z'.
+
+Firstly, some local variables get initialized. Most importantly the number of points for each direction and the grid object. This object represents the cube that iterates through the data set. It has two members. The `val' member is an array that saves the power values for the eight corners. The `p' member instead stores the coordinates for each corner. Afterwards three for-loops iterate through the data set. The first task is to fill the grid object with the values of the current cube. The eight indices here enumerate the corners in a counterclockwise fashion, first in the lower, then in the upper plane. The power values simply get picked out of the three dimensional array, while the coordinates get calculated by $coord = min + \frac{index}{resolution}$. Before the actual algorithm starts, the power values get checked for the value -1000, which indicate a hole in the data set. Cubes that have corners within a hole get ignored, because those are either within buildings or too far away. Now the algorithm can start to work on the current cube. First it determines the `cubeindex'. This is a variable, which resembles all the 256 different corner combinations. For example, if the first corner's value is greater than the isolevel, the first bit gets set to 1, for the second corner, the second bit gets set, etc. With 8 corners to a cube, the cubeindex can be between 0 and 255. Next, we need to determine where the isosurface intersects an edge. This is simply stored in a lookup table. This table has 256 entries, one for each corner configuration. The cubeindex is used as the lookup parameter. For each cubeindex the table stores a value, in which the bits 0 to 11 determine which of the 12 edges gets intersected. If an edge is intersected, the corresponding bit equals 1. For each intersection, the algorithm now uses linear interpolation (see the `VertexInter'-function for that) to determine where on the edge the intersection most likely happens. Those points get saved into the `vertlist', an array with 12 entries that is used to store the interpolated positions. Finally the intersections are used to form the actual surface by connecting them with triangles. For that, we use another lookup table, the `triTable'. This one is a two dimensional array. The first dimension has 256 entries, again one entry for each corner configuration. Those entries however consist of arrays with 16 entries. The last entry is always a `-1', because that value causes the for-loop to terminate. The other values determine the indices of the vertices form the verlist, which together form a triangle. So there are always three consecutive indices to a value. Since up to 15 values can be used, there are up to 5 triangles inside a cube, which is the maximum amount of triangles for any corner configuration. In case less triangles are needed, the other entries are set to `-1', forcing the the for-loop to stop. For each three entries not equal to -1, the interpolated points are added to the list of vertices of the isosurface-geometry and their indices within that array get added to the list of faces. This tells the Three.js framework to use these three points to construct a triangle. At the very end, the method `mergeVertices' gets called for the geometry object. This removes any duplicate vertices and adjusts the faces accordingly. That is very important, since most of the intersections are added multiple times for adjacent cubes.
 \subsection{Inverse Distance Interpolation}
+The Marching Cubes Algorithm is a useful tool to visualize the distribution within a dense scalar field. When it comes to real life measurement data however, those data sets often are too sparse for such algorithms. To create some sense of spacial distribution, one can interpolate these sparse data sets, to get some estimated scalar value for any point in space. Therefor we need an algorithm that takes into account the distance from the interpolation point to the measured points. The principle here is: The closer the point is to a measured value in comparison to the other values, the more influence that value has. In other words, if a point is nearly identical to a measurement position, it should have nearly the same value and if a point is equally far away from some points it should have the mean value of those points. An easy way to implement this is the so called inverse distance interpolation or inverse distance weighting. This algorithm is based on the idea that you multiply every value by a weight term of the form $w_i = \frac{1}{d(x_i,x)^p}$. Here $x_i$ is the position of the measurement point, $x$ is the point you want to interpolate to and $p$ a parameter that influences how much closer or farther points influence the value. Afterwards the algorithm adds up all the weighted values. This value gets normalized be the sum of all weights $w_w$. Now we have an affine combination of all the values according to the distance to a specific point in space, which is exactly what we wanted.
+\lstset{
+caption=Building Loader,
+label=list:InvDist,
+language=JavaScript}
+\begin{lstlisting}[float=bph]
+for (var j = 0; j < 3; j++) {
+    vertexInd = f[faceindex[j]];
+    pnt = spheregeom.vertices[vertexInd];
+    sum = 0;
+    weight = 0;
+    for (var k = 0; k < points.geometry.vertices.length; k++) {
+        var dist = pnt.distanceTo(points.geometry.vertices[k]);
+        weight += points.geometry.colors[k].getHSL().h / ( dist * dist);
+        sum += 1 / (dist * dist);
+    }
+    weight = weight / sum;
+    var col = new THREE.Color(0xffffff);
+    col.setHSL(weight, 1.0, 0.5);
+    f.vertexColors[j] = col;
+}
+\end{lstlisting}
+
+Listing \ref{list:InvDist} shows the implementation of this algorithm for one triangle of a spherical mesh. Here the first for-loop iterates through the three corners of the triangle. The current face (here called `f') stores the three indices for its corners. After extracting an index we get the vertex from the geometries vertices array. The sum and weight variables get reset to 0 and the actual algorithm starts with the next for-loop. This iterates through all known measurement points. The distance from the current vertex to the current measurement point can be obtained easily by the `distanceTo' method of the Three.Vector3-class. Afterwards the weight variable accumulates the weighted color values of all measurement points, while the sum variable sums up the weights only. As can be seen by the factor of $1/(dist*dist)$ the parameter $p = 2$. Afterwards, the weight simply is divided be the normalization and used as the color value of the new vertex color.
 \section{Description of Important Procedures}
 \subsection{GUI}
+The Graphical User Interface is an important part of an application, since it forms the link between the user and the application core. A good interface should provide access to all the programs functionality, while simultaneously abstracting those in an easily displayable and understandable way. The first approach was using the predefined dat.gui~\cite{datgui} library. With this helpful tool it is easy to create a minimalistic GUI as can be seen in figure~\ref{??}. With simple methods one can add controls to to the GUI, which decides how to visualize the control depending on the data type of the added object. String become a textbox that reflect their content, arrays become dropdown-lists, functions become buttons, which execute them, etc. This was very useful for debugging, however it did not look and work the way I wanted it to. When moving around in a three dimensional environment, I decided that it would look and feel more comfortable to have the controls in a kind of HUD fashion, like in some video games. An easy way to do that is to create simple HTML elements and layer them ontop of the renderer. That is possible because the renderer is also just a child of the HTML5 canvas element. This thoughts let to the current GUI, which uses JQuery to create HTML elements and position them on top of the rendering. The buttons and dropdown-lists get their style from a special css-sylesheet. Further, I use JQuery-ui library to create the dialogs, through which the user inserts information such as camera position or data set name.
+
+The design of the controls can be seen in figure~\ref{??}. Buttons that control the data set operations are placed int he top left corner. Those are green buttons with white text, which become white buttons with green text if hovered upon by the mouse. They are either clickable or they expand into a dropdown menu. Dropdown menu items are white with black text and upon hovering, they get colored slightly more gray. Some visualization details, like camera position and target, are shown in the bottom left corner, thy are supposed to be subtle, s they are simple black text labels without any background. If clicked upon they offer the possibility to change several visualization parameters, like the position and target or the isolevel and color. When something is loaded that uses color to visualize network power, a legend is added in the bottom right corner, which shows a colorstrip from red to green and assigns the corresponding minimum and maximum to the ends of the spectrum.
 \subsection{Registering and Loading Data}
-\subsection{Displaying Measurement Data}
-\subsection{Displaying Simulation Data}
+The two most important UI elements are the Register and the Load buttons. They are the tools the user determines what gets visualized. When the user has a data set to be visualized, the files first need to be copied into the AppData folder inside the applications directory. Then the registration dialog can be used to add the files to the list of registered data sets. This is useful, since this list gets saved into a separate text file, which will be read whenever the application is started. That way, the user does not have to add the same data over and over again. With the Load/Delete dialog the user can then load a data set from the list of registered ones. It also offers the possibility to delete a set from the list. 
+
+The registration dialog is shown in figure~\ref{??}. The first textbox and the first file selector have to be filled in order for the registration to work, because the data set needs a name. Further, it makes no sense to register a data set without network propagation data. The radio buttons  are set to `simulation' by default, so this only needs to be changed for real life measurement data. The last file selector is optional. It provides the possibility to include building data for the rendering. This is implemented with the help of the JQuery-ui library. It allows to create a dialog with a just one simple function. The function only needs an HTML object, which encapsulates a HTML form. This form is then used to inside the dialog. With another method the buttons get added. Each button gets a callback function, which determines what happens if it gets pressed. 
+
+The load dialog can be seen in figure~\ref{??}. It only features a dropdown selector, with all the registered data sets and two radio buttons. Those radio buttons can be used to choose whether the user wants to load or delete a registered set. Is is created the same way as the registration dialog. 
+\subsection{Measurement Data vs. Simulation Data}
+As already mentioned multiple times in this thesis, there are two different kinds of data. The Simulation data is generated by other applications, while real life data is acquired by actually visiting a location and taking measurements. This kinds of data have some significant differences and therefore have to be handled differently by the application.

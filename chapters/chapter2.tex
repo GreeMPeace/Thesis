@@ -2,7 +2,7 @@
 
 As any software project, this visualization tool also relies on many different algorithms and technical standards or conventions. This chapter aims to give an overview of the major external components and ideas, that contribute to the project and the way it works.
 \section{Algorithms}
-\subsection{Marching Cubes Algorithm}
+\subsection{Marching Cubes Algorithm} \label{chp2:Cubes}
 The marching cubes algorithm was designed in 1987 and published in \cite{MarchCubes}. The original idea was to create high resolution triangle models of constant density surfaces for medical purposes. However, the algorithm can be applied to any three dimensional scalar data set, not only tissue density. The aim of the algorithm is to find an isosurface within a data set. An isosurface is a two dimensional surface within a three dimensional context, that connects the points in space in which the data set has the same value.\footnote{Compare contour lines on a two dimensional map.}
 
 The algorithm uses the ``divide and conquer'' approach. It divides the whole set into small cubes, which it then iterates or `marches' through. The cubes are evaluated at the corners and each one gets marked, if it exceeds the isosurface value $val_{iso}$. That leads to $2^8=256$ different ways for a cube to be marked. Based on the marked corners, triangles are inserted within the cube, so they separate the marked corners from the unmarked ones. This is a clever way, because if a corner with a higher value is adjacent to one with a lower value, the isosurface has to intersect the edge somewhere in between. In order to further enhance the accuracy of the surface, a linear interpolation is used, to decide where on each edge of the cube the corners of the triangle(s) should be placed. Using two different symmetries the actual number of triangle arrangements can be reduced to 14. In each of those there is up to four triangles, as can be seen in figure \ref{fig:cubes-arr}.
@@ -61,7 +61,8 @@ All this lets the developers working with three.js focus more on designing an cr
 Listing~\ref{list:example} shows an easy example on how to use three.js in a JavaScript document. The code creates a Scene, a PerspectiveCamera, and a WebGLRenderer object. The renderer is then added to the body of the HTML page. Afterwards the predefined BoxGeometry and MeshBasicMaterial classes are used to create the mesh of a simple 1x1x1 cube. Finally, it is added to the scene and the camera is moved. Now the rendering loop is started, which slowly rotates the cube around the x and y axis. This example shows how a relatively complex animation can easily be implemented with just a few lines of code.
 \lstset{
 caption=Three.js Example,
-label=list:example}
+label=list:example,
+language=JavaScript}
 \begin{lstlisting}
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
